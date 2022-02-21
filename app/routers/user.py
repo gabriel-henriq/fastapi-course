@@ -2,6 +2,7 @@ from fastapi import Depends, HTTPException, status, APIRouter
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from typing import List
+
 from .. import models, schemas, utils
 from ..database import get_db
 from ..oauth2 import get_current_user
@@ -52,13 +53,3 @@ def create_user(user: schemas.CreateUser,
                             detail=f"This email already exists.")
 
     return new_user
-
-
-@router.put("/", status_code=status.HTTP_202_ACCEPTED,
-            response_model=schemas.UserOut)
-def update_user(user: schemas.UpdateUser,
-                id: int,
-                db: Session = Depends(get_db),
-                current_user: int = Depends(get_current_user)):
-
-    user_query = db.query(models.User).filter(models.User.id == id)
